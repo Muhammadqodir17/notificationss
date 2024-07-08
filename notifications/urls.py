@@ -2,6 +2,7 @@ from django.urls import path
 from .views import NotificationViewSet
 
 urlpatterns = [
-    path('notification/like/', NotificationViewSet.as_view({'get': 'send_liked_notification'})),
-    path('notification/comment/', NotificationViewSet.as_view({'get': 'send_commented_notification'}))
+    path('notification/like/', NotificationViewSet.as_view({'post': 'send_like_notification'})),
+    path('notification/comment/', NotificationViewSet.as_view({'post': 'send_comment_notification'})),
+    path('notification/follow/', NotificationViewSet.as_view({'post': 'send_follow_notification'}))
 ]

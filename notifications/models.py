@@ -1,24 +1,21 @@
 from django.db import models
-from rest_framework.authtoken.admin import User
 
 TYPE_CHOICES = (
     ('like', 'Like'),
     ('comment', 'Comment'),
+    ('follow', 'Follow')
 )
 
 MESSAGE_CHOICE = (
-    ('like', 'Your post liked'),
-    ('comment', 'Your post commented')
+    ('like', 'liked your post'),
+    ('comment', 'commented:'),
+    ('follow', 'started following you')
 )
 
 
-class Post(models.Model):
-    pass
-
-
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.PositiveIntegerField(default=0)
+    post = models.PositiveIntegerField(default=0)
     notification_type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     message = models.CharField(max_length=100, choices=MESSAGE_CHOICE)
 
