@@ -36,7 +36,6 @@ class NotificationViewSet(ViewSet):
     )
     def send_notifications(self, request, *args, **kwargs):
         data = request.data
-        print(data)
         self.check_token(request.data.get('token'))
 
         if int(data.get('notification_type')) == 1:
