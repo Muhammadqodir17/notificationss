@@ -38,9 +38,9 @@ class NotificationViewSet(ViewSet):
         data = request.data
         self.check_token(request.data.get('token'))
 
-        if data['notification_type'] == 1:
+        if data.get('notification_type') == 1:
             message = 'liked your post'
-        elif data['notification_type'] == 2:
+        elif data.get('notification_type') == 2:
             message = 'commented your post'
         else:
             message = 'following you'
