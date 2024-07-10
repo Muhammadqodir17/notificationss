@@ -123,8 +123,8 @@ MEDIA_ROOT = 'media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-TOKEN = '7449590643:AAGhT5cFNVuUUYiBtfbCvEMZsyW430TPpJs'
-CHAT_ID = '992767398'
-TELEGRAM_API_URL = 'http://api.telegram.org/bot{}sendMessage?chat_id={}&text={}'
+TOKEN = "6725176067:AAFYwaMgrBHuvq8V-iwzLOLNRjIVH1UYIBU"
+CHAT_ID = "-1001853506087"
+TELEGRAM_API_URL = "https://api.telegram.org/bot{}/sendMessage?text={}&chat_id={}"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
