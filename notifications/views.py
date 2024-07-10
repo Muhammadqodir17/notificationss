@@ -35,16 +35,17 @@ class NotificationViewSet(ViewSet):
         tags=['Notification']
     )
     def send_notifications(self, request, *args, **kwargs):
+        data = request.data
         self.check_token(request.data.get('token'))
 
-        if request.data['notification_type'] == 'like':
+        if data['notification_type'] == 1:
             message = 'liked your post'
-        elif request.data['notification_type'] == 'comment':
+        elif data['notification_type'] == 2:
             message = 'commented your post'
         else:
             message = 'following you'
 
-        serializer = NotificationSerializer(data={"message": message, **request.data})
+        serializer = NotificationSerializer(data={"message": message, **data})
         if serializer.is_valid():
             obj = serializer.save()
             response = send_message_telegram(obj)
