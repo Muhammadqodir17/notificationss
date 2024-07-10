@@ -1,9 +1,12 @@
 from rest_framework.viewsets import ViewSet
-from .models import Notification
+from .serializers import NotificationSerializer
 import requests
-from django.conf import settings
+from .utils import send_message_telegram
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.exceptions import ValidationError
 
 
 class NotificationViewSet(ViewSet):
@@ -14,88 +17,41 @@ class NotificationViewSet(ViewSet):
             type=openapi.TYPE_OBJECT,
             properties={
                 'user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='user_id'),
-                'post_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='user_id'),
+                'notification_type': openapi.Schema(type=openapi.TYPE_STRING, description='notification_type'),
+                'token': openapi.Schema(type=openapi.TYPE_STRING, description='token'),
             },
-            required=['user_id', 'post_id']
+            required=['user_id', 'notification_type', 'token']
         ),
         responses={
             400: 'Bad request',
-            200: 'Ok'
+            200: NotificationSerializer()
         },
-        tags=['like']
+        tags=['Notifications']
     )
-    def send_like_notification(self, request, *args, **kwargs):
-        obj = Notification.objects.create(user=request.data['user'], post=request.data['post'],
-                                          notification_type='like', message='like')
-        obj.save()
+    def check_token(self, token):
+        response = requests.post('http://134.122.76.27:8114/api/v1/check/', data={'token': token})
+        if response.status_code != 200:
+            raise ValidationError({'error': 'Invalid token'})
 
-        notification = Notification.objects.filter(user=request.data['user'], post=request.data['post'],
-                                                   notification_type='like').first()
+    def send_notifications(self, request, *args, **kwargs):
+        # self.check_token(request.data.get('token'))
+        # access_token = request.headers.get('Authorization')
+        # response = requests.get('http://134.122.76.27:8118/api/v1/auth/me/', headers={'Authorization': access_token})
+        # if response.status_code != 200:
+        #     return Response({'error': 'Not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+        if request.data['notification_type'] == 'like':
+            request.data['message'] = 'liked your post'
+        elif request.data['notification_type'] == 'comment':
+            request.data['message'] = 'commented your post'
+        else:
+            request.data['message'] = 'following you'
 
-        requests.get(
-            f"""http://api.telegram.org/bot{settings.tg_token}
-            sendMessage?chat_id={settings.chat_id}
-            &text=Notification\nMessage: {request.data['user']} {notification.message}"""
-        )
+        serializer = NotificationSerializer(data=request.data)
+        if serializer.is_valid():
+            obj = serializer.save()
+            response = send_message_telegram(obj)
+            if response.status_code != 200:
+                return Response({'error': 'Could not send message'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(
-        operation_description='Send comment notification',
-        operation_summary='Send comment notification',
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='user_id'),
-                'post_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='user_id'),
-            },
-            required=['user_id', 'post_id']
-        ),
-        responses={
-            400: 'Bad request',
-            200: 'Ok'
-        },
-        tags=['comment']
-    )
-    def send_comment_notification(self, request, *args, **kwargs):
-        obj = Notification.objects.create(user=request.data['user'], post=request.data['post'],
-                                          notification_type='comment', message='comment')
-        obj.save()
-
-        notification = Notification.objects.filter(user=request.data['user'], post=request.data['post'],
-                                                   notification_type='comment').first()
-
-        requests.get(
-            f"""http://api.telegram.org/bot{settings.tg_token}
-                sendMessage?chat_id={settings.chat_id}
-                &text=Notification\nMessage: {request.data['user']} {notification.message}"""
-        )
-
-    @swagger_auto_schema(
-        operation_description='Send follow notification',
-        operation_summary='Send follow notification',
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='user_id'),
-                'post_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='user_id'),
-            },
-            required=['user_id', 'post_id']
-        ),
-        responses={
-            400: 'Bad request',
-            200: 'Ok'
-        },
-        tags=['follow']
-    )
-    def send_follow_notification(self, request, *args, **kwargs):
-        obj = Notification.objects.create(user=request.data['user'], post=request.data['post'],
-                                          notification_type='follow', message='follow')
-        obj.save()
-
-        notification = Notification.objects.filter(user=request.data['user'], post=request.data['post'],
-                                                   notification_type='follow').first()
-
-        requests.get(
-            f"""http://api.telegram.org/bot{settings.tg_token}
-            sendMessage?chat_id={settings.chat_id}
-            &text=Notification\nMessage: {request.data['user']} {notification.message}"""
-        )
+            return Response(data={'message': 'Sent'}, status=status.HTTP_200_OK)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$(#l0-i^dy!w*@+re(n*4q)vz9sr)85l+2j0pu5#p$+jb%0n7w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -123,7 +123,8 @@ MEDIA_ROOT = 'media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-tg_token = '6617362077:AAEtf2XpYMWLVtAg3kiUNCFvNvcenHfQt9M'
-chat_id = '992767398'
+TOKEN = '7449590643:AAGhT5cFNVuUUYiBtfbCvEMZsyW430TPpJs'
+CHAT_ID = '992767398'
+TELEGRAM_API_URL = 'http://api.telegram.org/bot{}sendMessage?chat_id={}&text={}'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
