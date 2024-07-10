@@ -8,7 +8,7 @@ TYPE_CHOICES = (
 
 
 class Notification(models.Model):
-    user = models.PositiveIntegerField(default=0)
+    user_id = models.PositiveIntegerField(default=0)
     notification_type = models.IntegerField(default=1,choices=TYPE_CHOICES)
     message = models.CharField(max_length=100)
 
