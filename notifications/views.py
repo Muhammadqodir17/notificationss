@@ -36,10 +36,7 @@ class NotificationViewSet(ViewSet):
     )
     def send_notifications(self, request, *args, **kwargs):
         self.check_token(request.data.get('token'))
-        access_token = request.headers.get('Authorization')
-        response = requests.get('http://134.122.76.27:8118/api/v1/auth/me/', headers={'Authorization': access_token})
-        if response.status_code != 200:
-            return Response({'error': 'Not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
         if request.data['notification_type'] == 'like':
             request.data['message'] = 'liked your post'
         elif request.data['notification_type'] == 'comment':
