@@ -9,6 +9,6 @@ TELEGRAM_API_URL = settings.TELEGRAM_API_URL
 def send_message_telegram(obj):
     message = (
         f"Microservice: Notification\n"
-        f"message:{obj.user_id} {obj.message}"
+        f"message: {obj.message}"
     )
     return requests.get(TELEGRAM_API_URL.format(TOKEN, message, CHAT_ID))
