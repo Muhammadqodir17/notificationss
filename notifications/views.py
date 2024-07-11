@@ -11,11 +11,10 @@ from rest_framework.exceptions import ValidationError
 
 class NotificationViewSet(ViewSet):
 
-    def get_user(self):
-        response = requests.post('http://134.122.76.27:8112/api/v1/get/user/id/',
-                                 json={'user_id': self.get_token().json().get('user_id'),
-                                       'token': str(self.get_token().json().get('token'))})
-        return response
+    def check_token(self, token):
+        response = requests.post('http://134.122.76.27:8114/api/v1/check/', data={'token': token})
+        if response.status_code != 200:
+            raise ValidationError({'error': 'Invalid token'})
 
     def get_token(self):
         response = requests.post('http://134.122.76.27:8114/api/v1/login/', data={
@@ -25,10 +24,11 @@ class NotificationViewSet(ViewSet):
         })
         return response
 
-    def check_token(self, token):
-        response = requests.post('http://134.122.76.27:8114/api/v1/check/', data={'token': token})
-        if response.status_code != 200:
-            raise ValidationError({'error': 'Invalid token'})
+    def get_user(self):
+        response = requests.post('http://134.122.76.27:8112/api/v1/get/user/id/',
+                                 json={'user_id': self.get_token().json().get('user_id'),
+                                       'token': str(self.get_token().json().get('token'))})
+        return response
 
     @swagger_auto_schema(
         operation_description='Send like notification',
