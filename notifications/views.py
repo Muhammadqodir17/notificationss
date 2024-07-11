@@ -23,7 +23,7 @@ class NotificationViewSet(ViewSet):
             type=openapi.TYPE_OBJECT,
             properties={
                 'user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='user_id'),
-                'notification_type': openapi.Schema(type=openapi.TYPE_STRING, description='notification_type'),
+                'notification_type': openapi.Schema(type=openapi.TYPE_INTEGER, description='notification_type'),
                 'token': openapi.Schema(type=openapi.TYPE_STRING, description='token'),
             },
             required=['user_id', 'notification_type', 'token']
