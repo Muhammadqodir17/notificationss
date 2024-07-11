@@ -11,6 +11,14 @@ from rest_framework.exceptions import ValidationError
 
 class NotificationViewSet(ViewSet):
 
+    def get_token(self):
+        response = requests.post('http://134.122.76.27:8114/api/v1/login/', data={
+            "service_id": 1,
+            "service_name": "Comment",
+            "secret_key": "abd5a92b-57f4-45f4-95f5-bbde628a2131"
+        })
+        return response
+
     def check_token(self, token):
         response = requests.post('http://134.122.76.27:8114/api/v1/check/', data={'token': token})
         if response.status_code != 200:
@@ -36,7 +44,11 @@ class NotificationViewSet(ViewSet):
     )
     def send_notifications(self, request, *args, **kwargs):
         data = request.data
-        # self.check_token(request.data.get('token'))
+        self.check_token(request.data.get('token'))
+        response = request.get('http://134.122.76.27:8112/api/v1/get/user/id/',
+                               json={'user_id': data.get('user_id'),
+                                     'token': str(self.get_token().json().get('token'))})
+        print(response)
 
         if int(data.get('notification_type')) == 1:
             message = 'liked your post'
