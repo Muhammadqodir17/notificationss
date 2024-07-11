@@ -50,7 +50,7 @@ class NotificationViewSet(ViewSet):
     )
     def send_notifications(self, request, *args, **kwargs):
         data = request.data
-        # self.check_token(request.data.get('token'))
+        self.check_token(request.data.get('token'))
         user = self.get_user(request.data.get('user_id'))
         if user.json().get("first_name") is not None or user.json().get("last_name") is not None:
             if int(data.get('notification_type')) == 1:
