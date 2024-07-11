@@ -56,7 +56,8 @@ class NotificationViewSet(ViewSet):
             if int(data.get('notification_type')) == 1:
                 message = f'{user.json().get("first_name")} {user.json().get("last_name")} liked your post'
             elif int(data.get('notification_type')) == 2:
-                message = f'{user.json().get("first_name")} {user.json().get("last_name")} commented {request.data.get('message')}
+                message = (f'{user.json().get("first_name")} {user.json().get("last_name")}'
+                           f' commented {request.data.get('message')}')
             elif int(data.get('notification_type')) == 3:
                 message = f'{user.json().get("first_name")} {user.json().get("last_name")} following you'
             else:
