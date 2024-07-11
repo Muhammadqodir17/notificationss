@@ -52,25 +52,24 @@ class NotificationViewSet(ViewSet):
         data = request.data
         # self.check_token(request.data.get('token'))
         user = self.get_user(request.data.get('user_id'))
-        print(user.json().get("first_name"))
         if user.json().get("first_name") is not None or user.json().get("last_name") is not None:
             if int(data.get('notification_type')) == 1:
                 message = f'{user.json().get("first_name")} {user.json().get("last_name")} liked your post'
             elif int(data.get('notification_type')) == 2:
-                message = f'{user.json().get("first_name")} {user.json().get("last_name")} commented your post'
+                message = f'{user.json().get("first_name")} {user.json().get("last_name")} commented {request.data.get('message')}
             elif int(data.get('notification_type')) == 3:
                 message = f'{user.json().get("first_name")} {user.json().get("last_name")} following you'
             else:
-                return Response(data={'error': 'notification_type not found'})
+                return Response(data={'error': 'Invalid notification_type'}, status=status.HTTP_400_BAD_REQUEST)
 
             serializer = NotificationSerializer(data={"message": message, **data, 'user_id': data.get('user_id')})
             if serializer.is_valid():
-                obj = serializer.save()
-                response = send_message_telegram(obj)
+                serializer.save()
+                response = send_message_telegram(message)
                 if response.status_code != 200:
                     return Response({'error': 'Could not send message'}, status=status.HTTP_400_BAD_REQUEST)
 
                 return Response(data={'message': 'Sent'}, status=status.HTTP_200_OK)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(data={'error': 'User not found'})
+        return Response(data={'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
