@@ -30,8 +30,8 @@ class NotificationViewSet(ViewSet):
         return response
 
     @swagger_auto_schema(
-        operation_description='Send like notification',
-        operation_summary='Send like notification',
+        operation_description='Send notification',
+        operation_summary='Send notification',
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
