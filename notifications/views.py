@@ -7,6 +7,7 @@ from drf_yasg import openapi
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from .models import Notification
 
 
 class NotificationViewSet(ViewSet):
@@ -73,3 +74,34 @@ class NotificationViewSet(ViewSet):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(data={'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    @swagger_auto_schema(
+        operation_description='Send notification',
+        operation_summary='Send notification',
+        manual_parameters=[
+            openapi.Parameter('user_id', type=openapi.TYPE_INTEGER, description='user_id', in_=openapi.IN_QUERY),
+        ],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'token': openapi.Schema(type=openapi.TYPE_STRING, description='token'),
+            },
+            required=['user_id', 'token']
+        ),
+        responses={
+            400: 'Bad request',
+            200: NotificationSerializer()
+        },
+        tags=['Notification']
+    )
+    def get_by_id(self, request, *args, **kwargs):
+        self.check_token(request.data.get('token'))
+        user = self.get_user(kwargs['pk'])
+        if user is None:
+            return Response(data={'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        notifications = Notification.objects.filter(user_id=kwargs['pk'])
+
+        return Response(data=NotificationSerializer(notifications, many=True).data, status=status.HTTP_200_OK)
+
+
