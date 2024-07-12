@@ -25,9 +25,8 @@ class NotificationViewSet(ViewSet):
         return response
 
     def get_user(self, pk):
-        response = requests.post('http://134.122.76.27:8118/api/v1/get/user/id/',
-                                 json={'user_id': pk,
-                                       'token': str(self.get_token().json().get('token'))})
+        response = requests.post(f'http://134.122.76.27:8118/api/v1/get/user/{pk}/',
+                                 json={'token': str(self.get_token().json().get('token'))})
         return response
 
     @swagger_auto_schema(
