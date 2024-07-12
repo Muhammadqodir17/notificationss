@@ -78,15 +78,12 @@ class NotificationViewSet(ViewSet):
     @swagger_auto_schema(
         operation_description='Send notification',
         operation_summary='Send notification',
-        manual_parameters=[
-            openapi.Parameter('user_id', type=openapi.TYPE_INTEGER, description='user_id', in_=openapi.IN_QUERY),
-        ],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
                 'token': openapi.Schema(type=openapi.TYPE_STRING, description='token'),
             },
-            required=['user_id', 'token']
+            required=['token']
         ),
         responses={
             400: 'Bad request',
