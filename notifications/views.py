@@ -167,8 +167,8 @@ class NotificationForFollowViewSet(ViewSet):
         return response
 
     @swagger_auto_schema(
-        operation_description='Send notification',
-        operation_summary='Send notification',
+        operation_description='Send follow notification',
+        operation_summary='Send follow notification',
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
