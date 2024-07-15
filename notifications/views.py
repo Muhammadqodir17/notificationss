@@ -96,7 +96,7 @@ class NotificationViewSet(ViewSet):
         return Response(data={'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
-        operation_description='Get Notifications by id',
+        operation_description='Get Notifications by User_id',
         operation_summary='Get Notifications by id',
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -143,7 +143,7 @@ class NotificationViewSet(ViewSet):
 
         notifications = Notification.objects.all()
 
-        return Response(data=NotificationSerializer(notifications, many=True), status=status.HTTP_200_OK)
+        return Response(data=NotificationSerializer(notifications, many=True).data, status=status.HTTP_200_OK)
 
 
 class NotificationForFollowViewSet(ViewSet):
